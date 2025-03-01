@@ -1,10 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
-    id("kotlin-kapt")  // เพิ่มบรรทัดนี้
-    id("com.google.dagger.hilt.android")  // ถ้าใช้ Hilt
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.kotlinx.serialization)
+    id("kotlin-kapt")
 }
+
 
 android {
     namespace = "com.example.cleanarchitecturemvvmandroid"
@@ -42,6 +45,48 @@ android {
 }
 
 dependencies {
+    // Timber
+    implementation(libs.timber)
+
+    // Coil
+    implementation(libs.coil3.compose)
+    implementation(libs.coil3.ktor)
+
+    // Lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
+    // Google Fonts
+    implementation(libs.androidx.ui.text.google.fonts)
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.foundation.android)
+    kapt(libs.androidx.room.compiler) // สำคัญมาก!
+
+    // Hilt (dagger/hilt)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.hilt.compiler)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.androidx.hilt.compiler)
+
+    // Ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.sandwich.ktor)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.slf4j.simple)
+
+    // MARK: - Navigation
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -74,13 +119,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
-// Hilt สำหรับ Dependency Injection (ถ้าใช้)
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
-
-    // Hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
 
     // Retrofit for API calls
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
