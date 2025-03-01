@@ -7,4 +7,5 @@ interface UserRepository {
     fun getUsers(): Flow<List<User>>
     suspend fun refreshUsers()
     suspend fun getUserById(id: Int): User?
+    suspend fun getUsersFromDatabase(): List<User>
 }

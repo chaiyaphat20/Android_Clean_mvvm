@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.cleanarchitecturemvvmandroid.presentation.user.UserDetailScreen
 import com.example.cleanarchitecturemvvmandroid.presentation.user.UserScreen
+import com.example.cleanarchitecturemvvmandroid.presentation.userdatabase.UserDatabaseScreen
 
 /**
  * การกำหนดการนำทางภายในแอพ
@@ -23,6 +24,10 @@ fun AppNavigation(navController: NavHostController) {
                 onUserClick = { userId ->
                     // นำทางไปยังหน้ารายละเอียดผู้ใช้
                     navController.navigate("user_detail/$userId")
+
+                },
+                onViewSavedUsersClick = {
+                    navController.navigate("user_database")
                 }
             )
         }
@@ -34,6 +39,10 @@ fun AppNavigation(navController: NavHostController) {
                 userId = userId,
                 navController = navController
             )
+        }
+
+        composable("user_database") {
+            UserDatabaseScreen( navController = navController)
         }
     }
 }

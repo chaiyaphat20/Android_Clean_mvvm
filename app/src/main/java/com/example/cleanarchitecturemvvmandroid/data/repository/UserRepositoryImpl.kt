@@ -1,6 +1,5 @@
 package com.example.cleanarchitecturemvvmandroid.data.repository
 
-import com.example.cleanarchitecturemvvmandroid.data.mapper.UserMapper.toDomainModel
 import com.example.cleanarchitecturemvvmandroid.data.local.dao.UserDao
 import com.example.cleanarchitecturemvvmandroid.data.local.entity.UserEntity
 import com.example.cleanarchitecturemvvmandroid.data.remote.api.UserApi
@@ -10,8 +9,12 @@ import com.example.cleanarchitecturemvvmandroid.domain.model.Company
 import com.example.cleanarchitecturemvvmandroid.domain.model.Geo
 import com.example.cleanarchitecturemvvmandroid.domain.model.User
 import com.example.cleanarchitecturemvvmandroid.domain.repository.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -21,7 +24,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override fun getUsers(): Flow<List<User>> = flow {
         val userResponses = userApi.getUsers()
-        val users = userResponses.map { it.toDomainModel() }
+        val users = userResponses.map { it.toUser() }
         emit(users)
     }
 
@@ -84,5 +87,13 @@ class UserRepositoryImpl @Inject constructor(
             companyCatchPhrase = company.catchPhrase,
             companyBs = company.bs
         )
+    }
+
+    override suspend fun getUsersFromDatabase(): List<User> {
+        val data = userDao.getAll()
+            .map { entities -> entities.map { it.toUser() } }
+            .flowOn(Dispatchers.IO)
+            .first()
+        return data
     }
 }

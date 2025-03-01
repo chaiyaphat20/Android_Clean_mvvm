@@ -15,7 +15,33 @@ data class UserResponse(
     @SerializedName("website") val website: String,
     @SerializedName("address") val address: AddressResponse,
     @SerializedName("company") val company: CompanyResponse
-)
+){
+   fun toUser(): User {
+        return User(
+            id = id,
+            name = name,
+            username = username,
+            email = email,
+            phone = phone,
+            website = website,
+            address = Address(
+                street = address.street,
+                suite = address.suite,
+                city = address.city,
+                zipcode = address.zipcode,
+                geo = Geo(
+                    lat = address.geo.lat,
+                    lng = address.geo.lng
+                )
+            ),
+            company = Company(
+                name = company.name,
+                catchPhrase = company.catchPhrase,
+                bs = company.bs
+            )
+        )
+    }
+}
 
 data class AddressResponse(
     @SerializedName("street") val street: String,

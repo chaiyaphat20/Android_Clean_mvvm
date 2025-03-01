@@ -4,6 +4,7 @@ package com.example.cleanarchitecturemvvmandroid.presentation.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cleanarchitecturemvvmandroid.data.local.dao.UserDao
 import com.example.cleanarchitecturemvvmandroid.domain.model.User
 import com.example.cleanarchitecturemvvmandroid.domain.usecase.GetUsersUseCase
 import com.example.cleanarchitecturemvvmandroid.domain.usecase.RefreshUsersUseCase
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val getUsersUseCase: GetUsersUseCase,
-    private val refreshUsersUseCase: RefreshUsersUseCase
+    private val refreshUsersUseCase: RefreshUsersUseCase,
+    private val userDao: UserDao
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(UserState())
@@ -43,6 +45,28 @@ class UserViewModel @Inject constructor(
 
             // ดึงข้อมูลจาก API เพื่ออัพเดตฐานข้อมูล
             refreshUsers()
+        }
+    }
+
+    fun saveUsers() {
+        viewModelScope.launch {
+            try {
+                userDao.insertAll(state.value.users.map { it.toUserEntity() })
+                // แสดงข้อความแจ้งเตือนว่าบันทึกข้อมูลสำเร็จ
+            } catch (e: Exception) {
+                // แสดงข้อความแจ้งเตือนว่าบันทึกข้อมูลล้มเหลว
+            }
+        }
+    }
+
+    fun clearAllData() {
+        viewModelScope.launch {
+            try {
+                userDao.deleteAllUsers()
+                // Show a success message or update the UI accordingly
+            } catch (e: Exception) {
+                // Show an error message or handle the exception
+            }
         }
     }
 

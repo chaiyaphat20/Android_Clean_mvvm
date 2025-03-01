@@ -25,15 +25,37 @@ import kotlinx.serialization.json.Json
 @Composable
 fun UserScreen(
     viewModel: UserViewModel = hiltViewModel(),
-    onUserClick: (Int) -> Unit
+    onUserClick: (Int) -> Unit,
+    onViewSavedUsersClick: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("JSONPlaceholder Users") }
+                title = { Text("APP") },
+                actions = {
+                    Button(
+                        onClick = { viewModel.saveUsers() },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Text("Save")
+                    }
+                    Button(
+                        onClick = onViewSavedUsersClick,
+                        modifier = Modifier.padding(end = 16.dp)
+                    ) {
+                        Text("View Saved Users")
+                    }
+                    Button(
+                        onClick = {viewModel.clearAllData()},
+                        modifier = Modifier.padding(end = 16.dp)
+                    ) {
+                        Text("Clear")
+                    }
+                }
             )
+
         }
     ) { paddingValues ->
         Box(
