@@ -8,6 +8,7 @@ import com.example.cleanarchitecturemvvmandroid.data.local.dao.UserDao
 import com.example.cleanarchitecturemvvmandroid.domain.model.User
 import com.example.cleanarchitecturemvvmandroid.domain.usecase.GetUsersUseCase
 import com.example.cleanarchitecturemvvmandroid.domain.usecase.RefreshUsersUseCase
+import com.example.cleanarchitecturemvvmandroid.utils.Response
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,15 +37,39 @@ class UserViewModel @Inject constructor(
     private fun loadUsers() {
         viewModelScope.launch {
             // ติดตามข้อมูลผู้ใช้จาก database ผ่าน Flow
-            getUsersUseCase().collect { users ->
-                _state.update { currentState ->
-                    Log.d("ART555",Gson().toJson(users))
-                    currentState.copy(users = users)
+            getUsersUseCase().collect { response ->
+                when (response) {
+                    is Response.Loading -> {
+                        _state.update { currentState ->
+                            currentState.copy(isLoading = true)
+                        }
+                    }
+                    is Response.Success -> {
+                        _state.update { currentState ->
+                            currentState.copy(
+                                users = response.data,
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    }
+                    is Response.Error -> {
+                        _state.update { currentState ->
+                            // ใช้ข้อมูลที่มีอยู่ (fallback data) ถ้ามี
+                            val updatedUsers = response.data ?: currentState.users
+                            currentState.copy(
+                                users = updatedUsers,
+                                isLoading = false,
+                                error = response.message ?: "Unknown error occurred"
+                            )
+                        }
+                    }
                 }
             }
 
+
             // ดึงข้อมูลจาก API เพื่ออัพเดตฐานข้อมูล
-            refreshUsers()
+//            refreshUsers()
         }
     }
 

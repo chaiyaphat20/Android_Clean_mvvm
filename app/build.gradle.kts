@@ -64,6 +64,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.foundation.android)
+    implementation(libs.firebase.crashlytics.buildtools)
     kapt(libs.androidx.room.compiler) // สำคัญมาก!
 
     // Hilt (dagger/hilt)
